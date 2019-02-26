@@ -18,7 +18,6 @@ prop$address.bakery <- str_replace_all(prop$address.bakery, "[^[:alnum:]]", " ")
 prop$lat <- as.numeric(prop$lat)
 prop$lon <- as.numeric(prop$lon)
 i <- length(prop[,1])
-j <- 1
 
 while(i>0){
 
