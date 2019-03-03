@@ -4,121 +4,47 @@ output:
   pdf_document:
     includes:
       in_header: header.tex
+      before_body: doc-prefix.tex
 ---
 
-```{r echo = FALSE, results='hide', warning = FALSE, message=FALSE}
-library(jsonlite)
-library(stringr)
+```{r echo = FALSE}
+info_side_title <- "Hello world, here is my postcard full print content"
+info_side_text <- "The secret to better breads: Our higher gluten bread flour delivers consistent, dependable results. Your choice of flour makes a very big difference in bread baking: flours with a higher protein content create loftier yeasted breads. Our bread flour a full point higher than other national brands. It strengthens the rise, so your breads are lofty and perfectly textured every time. Use it for all your yeast baking, from bread (including bread machine loaves) to rolls to pizza. If you have plans for a large retail component in your bakery, you'll want to consider what types of bakery display cases you will need. Both refrigerated and non-refrigerated styles are available. You will also have to decide whether you want a self-serve display case or one designed for serving customers from behind the counter."
+address_side_title <- "Hello, address-side title!"
+address_side_text <- "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+recipient <- "Brian Jackson"
+street <- "110th Street"
+city <- "Spokane, WA, 99205"
 ```
 
-```{r echo = FALSE, results='asis'}
-get_data <- fromJSON("https://nominatim.openstreetmap.org/?format=json&addressdetails=1&q=bakery+in+seattle&format=json&limit=20")
-prop <- flatten(get_data)
-prop$address.bakery <- str_replace_all(prop$address.bakery, "[^[:alnum:]]", " ")
-prop$lat <- as.numeric(prop$lat)
-prop$lon <- as.numeric(prop$lon)
-i <- length(prop[,1])
-
-while(i>0){
-
-prop_current <- prop[i,]
-comps_list <- prop
-
-comps_list$dist_lon <- abs(prop_current$lon - comps_list$lon)
-comps_list$dist_lat <- abs(prop_current$lat - comps_list$lat)
-comps_list$dist <- sqrt(comps_list$dist_lon^2 + comps_list$dist_lat^2)
-comps_list <- comps_list[order(comps_list$dist),]
-names(prop_current$address)
-
-cat("
-\\pagestyle{empty}
-\\restoregeometry
-\\setlength\\parindent{0pt}
-\\pagestyle{fancy}
-\\fancyhead{}
-\\renewcommand{\\headrulewidth}{0pt}
-\\renewcommand{\\footrulewidth}{0pt}
-\\pagenumbering{gobble}
-\\fancyfoot[L]{\\Huge Flour Logo}
-\\fancyfoot[R]{\\Huge Display Logo}
-\\setlength\\parindent{0pt}
-\\sffamily
-\\renewcommand{\\linespread}{1.0}
-\\setlength{\\columnsep}{1cm}
-\\setlength{\\parskip}{4pt}
-\\begin{multicols}{2}
-\\setlength{\\columnseprule}{0.4pt}
-\\justify
-")
-
-cat("
-\\textbf{\\large Are you using the right flour for your bakery?} \\par
-\\small The secret to better breads: Our higher gluten bread flour delivers consistent, dependable results. \\par
-Your choice of flour makes a very big difference in bread baking: flours with a higher protein content create loftier yeasted breads. Our bread flour is 12.7\\% protein - a full point higher than other national brands. It strengthens the rise, so your breads are lofty and perfectly textured every time. \\par
-Use it for all your yeast baking, from bread (including bread machine loaves) to rolls to pizza. \\par
-\\columnbreak")
-
-cat("
-\\textbf{\\large A great display case can make all the difference!} \\par
-\\small If you have plans for a large retail component in your bakery, you'll want to consider what types of bakery display cases you will need. Both refrigerated and non-refrigerated styles are available. You will also have to decide whether you want a self-serve display case or one designed for serving customers from behind the counter. \\par
-As there are so many sizes and styles to consider, it's a good idea to consult our deli case and bakery display case buying guide for a more detailed overview of what's available. \\par
-    ")
-
-
-cat(
-  "
-   \\end{multicols}
-\\newpage
-  "
-)
-
-cat("
-\\pagestyle{empty}
-\\fancyhf{}
-\\newgeometry{footskip=1cm}
-\\newgeometry{margin=0.25in}
-\\begin{multicols}{2}
-\\setlength{\\columnseprule}{0.4pt}
-\\small
-\\underline{\\textbf {Competing bakeries in your area}}
-\\vspace{2mm}
-\\newline
-")
-
-for(c in 1:5){
-  comp_temp <- comps_list[c,]
-  cat("\\textbf{", 
-      as.character(comp_temp$address.bakery),
-      "}",
-      "\\newline",
-      comp_temp$address.road,
-      "\\newline",
-      comp_temp$address.city,
-      comp_temp$address.state,
-      "\\vspace{2mm}",
-      "\\newline")
-  }
-
-cat("
-\\par
-\\columnbreak
-\\hspace{0.5in}
-\\vskip 0.9in
-\\parbox[t]{5cm}{
-\\hspace{0.2in}
-", prop_current$address.bakery, " \\par
-\\hspace{0.2in}
-", prop_current$address.road, " \\par
-\\hspace{0.2in}
-", paste(prop_current$address.city, ", ", prop_current$address.state, prop_current$address.postcode, sep=""), "}
-
-    ")
-
-cat("
-\\end{multicols}
-\\newpage")
-
-i<-i-1
-
+\textbf{\large
+`r info_side_title`
 }
-```
+\par
+\normalsize
+`r info_side_text`
+\par
+\newpage
+\begin{multicols}{2}
+\textbf{\large
+`r address_side_title`
+}
+\par
+`r address_side_text`
+\newline
+\par
+\columnbreak
+\hspace{0.5in}
+\vskip 0.9in
+\parbox[t]{5cm}{
+\hspace{0.5in}
+`r recipient`
+\par
+\hspace{0.5in}
+`r street`
+\par
+\hspace{0.5in}
+`r city`
+\par
+}
+\end{multicols}
